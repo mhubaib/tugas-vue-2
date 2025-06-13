@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .fade-enter-active,
+        .fade-leave-active {
+            transition: opacity 0.3s ease;
+        }
+
+        .fade-enter,
+        .fade-leave-to {
+            opacity: 0;
+        }
+
+        .form-input {
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+    </style>
+    <title>Formulir</title>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div id="app" class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-medium mb-2">Input judul formulir:</label>
+            <input type="text" v-model="judulFormulir"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md form-input focus:outline-none"
+                placeholder="Masukkan judul formulir" />
+        </div>
+        <form-profile :title="judulFormulir"
+            @form-submitted="saveData">
+        </form-profile>
+        <button @click="showForm"
+            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 rounded-md transition-colors duration-200 mt-4">
+            {{ showData ? 'Sembunyikan' : 'Tampilkan' }}
+        </button>
+        <transition name="fade">
+            <p v-show="showData && nama && umur && alamat"
+                class="mt-4 text-gray-800 bg-gray-50 p-4 rounded-md border border-gray-200">
+                Nama saya adalah {{ nama }}, umur saya {{ umur }} tahun, saya tinggal di {{ alamat }}
+            </p>
+        </transition>
+    </div>
+
+    <script>
+        Vue.component('form-profile', {
+            props: ['title'],
+            template: `
+            <div class="mb-6">
+                <h1 class="text-xl font-semibold text-gray-800 mb-2">Child Component</h1>
+                <h2 class="text-lg text-gray-600 mb-4">{{ title }}</h2>
+                <div class="space-y-3">
+                    <input 
+                        type="text" 
+                        placeholder="Nama" 
+                        ref="nama" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md form-input focus:outline-none"
+                    >
+                    <input 
+                        type="number" 
+                        placeholder="Umur" 
+                        ref="umur" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md form-input focus:outline-none"
+                    >
+                    <input 
+                        type="text" 
+                        placeholder="Alamat" 
+                        ref="alamat" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md form-input focus:outline-none"
+                    >
+                    <button 
+                        @click="submitForm" 
+                        class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 rounded-md transition-colors duration-200"
+                    >
+                        Submit
+                    </button>
+                </div>
+            </div>
+            `,
+            methods: {
+                submitForm() {
+                    alert('Form submitted');
+                    this.$emit('form-submitted', {
+                        nama: this.$refs.nama.value,
+                        umur: this.$refs.umur.value,
+                        alamat: this.$refs.alamat.value
+                    });
+                }
+            }
+        });
+
+        new Vue({
+            el: "#app",
+            data: {
+                judulFormulir: '',
+                nama: '',
+                umur: '',
+                alamat: '',
+                showData: false
+            },
+            methods: {
+                showForm() {
+                    this.showData = !this.showData;
+                },
+                saveData(data) {
+                    this.nama = data.nama;
+                    this.umur = data.umur;
+                    this.alamat = data.alamat;
+                },
+            }
+        });
+    </script>
+</body>
+
+</html>
